@@ -1,1 +1,229 @@
-<!DOCTYPE html><html lang="en"><head><style>*{box-sizing:border-box}canvas{width:100%;height:100%;position:fixed;inset:0}.settings{-webkit-backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);color:#fff;z-index:10;background:#0006;border:2px solid #90ee90;border-radius:.75em;padding:1rem;font-family:Segoe UI,Tahoma,Geneva,Verdana,sans-serif;font-size:1rem;font-weight:700;position:absolute;inset:1rem 1rem auto;box-shadow:inset 0 0 6rem 4px green}.hide{display:none!important}.settings:focus-within{position:absolute;bottom:0;box-shadow:inset 0 0 2rem 4px green}.settings textarea{width:100%;min-height:4rem;font:inherit;color:inherit;background-color:#0000;border:none;outline:none}.settings .actions{text-align:right;font-size:.8rem}.settings .actions label{margin-bottom:.5rem;display:block}.settings .text{color:#90ee90;margin-top:0;font-size:.8rem;font-weight:400}input[type=number]{width:3rem;text-align:center;font:inherit;color:inherit;background-color:#0000;border:none;outline:none}@media screen and (min-width:768px){.settings{max-width:50%;top:auto;bottom:24px}.settings .actions label{margin:0 .5rem;display:inline-block}}div.copyright{color:#fff;z-index:999;font-size:12px;position:fixed;bottom:0;left:50%;transform:translate(-50%)}div.copyright a{color:#fff}button#btnStart{color:#fff;text-align:center;cursor:pointer;width:100%;background-color:#4caf50;border:none;border-radius:16px;margin:4px 2px;padding:15px 32px;font-size:16px;text-decoration:none}</style><title></title></head><body> <script type="module" src="/roulette/index.b3009326.js"></script> <script type="text/javascript">const MCAFE_API="https://port-0-mcafe-51r7c2alpxsdhy1.sel4.cloudtype.app";function parseName(e){const t=/(\/\d+)/,n=/(\*\d+)/,o=t.test(e),a=n.test(e);return{name:/^\s*([^\/*]+)?/.exec(e)[1],weight:o?parseInt(t.exec(e)[1].replace("/","")):1,count:a?parseInt(n.exec(e)[1].replace("*","")):1}}function getReady(e,t){window.roullete.setMarbles(e.split(",")),setWinnerRank(t),ready=e.length>0}function setWinnerRank(e){window.options.winningRank=e-1,window.roullete.setWinningRank(window.options.winningRank)}let ready=!1;document.addEventListener("DOMContentLoaded",(()=>{const e=new URLSearchParams(window.location.search),t=e.get("users"),n=e.get("count"),o=e.get("weight"),a=e.get("goal"),i=e.get("room"),s=e.get("token"),r=t.split(",").map((e=>e.trim())).filter((e=>!!e)),c=new Set,d={};r.forEach((e=>{const t=o>1?`${e}/${o}`:e;c.has(t)||(c.add(t),d[t]=0),d[t]+=Number(n)}));const l=[];Object.keys(d).forEach((e=>{d[e]>1?l.push(`${e}*${d[e]}`):l.push(e)}));const u=l.join(",");document.querySelector("#in_names").value=u,getReady(u,a),document.querySelector("#btnStart").addEventListener("click",(()=>{ready&&(window.roullete.start(),document.querySelector("#settings").classList.add("hide"))})),document.querySelector("#chkSkill").addEventListener("change",(e=>{window.options.useSkills=e.target.matches(":checked"),window.roullete.setWinningRank(window.options.winningRank)})),window.roullete.addEventListener("goal",(async e=>{ready=!1,document.querySelector("#settings").classList.remove("hide");const t=e.detail.winner,{memberList:n}=await fetch(`${MCAFE_API}/room/${i}`,{headers:{Authorization:`Bearer ${s}`,"Content-Type":"application/json"}}).then((e=>e.json())),o=n.find((e=>e.nickname===t)).memberSn;await fetch(`${MCAFE_API}/dashboard/looser`,{method:"POST",headers:{Authorization:`Bearer ${s}`,"Content-Type":"application/json"},body:JSON.stringify({looserSn:o,roomSn:+i,gameType:"PINBALL"})}).then((e=>e.json()))}))}));</script> <div id="settings" class="settings"> <input type="checkbox" id="chkSkill" checked class="hide"> <textarea class="hide" id="in_names" placeholder="hello :)"></textarea> <div class="actions"> <button id="btnStart">Start</button> </div> </div> <div class="copyright">&copy; 2023.<a href="https://lazygyu.net" target="_blank">origin by lazygyu, edit by brady</a> </div> </body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>* {
+  box-sizing: border-box;
+}
+
+canvas {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  inset: 0;
+}
+
+.settings {
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  color: #fff;
+  z-index: 10;
+  background: #0006;
+  border: 2px solid #90ee90;
+  border-radius: .75em;
+  padding: 1rem;
+  font-family: Segoe UI, Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 1rem;
+  font-weight: bold;
+  position: absolute;
+  inset: 1rem 1rem auto;
+  box-shadow: inset 0 0 6rem 4px green;
+}
+
+.hide {
+  display: none !important;
+}
+
+.settings:focus-within {
+  position: absolute;
+  bottom: 0;
+  box-shadow: inset 0 0 2rem 4px green;
+}
+
+.settings textarea {
+  width: 100%;
+  min-height: 4rem;
+  font: inherit;
+  color: inherit;
+  background-color: #0000;
+  border: none;
+  outline: none;
+}
+
+.settings .actions {
+  text-align: right;
+  font-size: .8rem;
+}
+
+.settings .actions label {
+  margin-bottom: .5rem;
+  display: block;
+}
+
+.settings .text {
+  color: #90ee90;
+  margin-top: 0;
+  font-size: .8rem;
+  font-weight: normal;
+}
+
+input[type="number"] {
+  width: 3rem;
+  text-align: center;
+  font: inherit;
+  color: inherit;
+  background-color: #0000;
+  border: none;
+  outline: none;
+}
+
+@media screen and (min-width: 768px) {
+  .settings {
+    max-width: 50%;
+    top: auto;
+    bottom: 24px;
+  }
+
+  .settings .actions label {
+    margin: 0 .5rem;
+    display: inline-block;
+  }
+}
+
+div.copyright {
+  color: #fff;
+  z-index: 999;
+  font-size: 12px;
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+div.copyright a {
+  color: #fff;
+}
+
+button#btnStart {
+  color: #fff;
+  text-align: center;
+  cursor: pointer;
+  width: 100%;
+  background-color: #4caf50;
+  border: none;
+  border-radius: 16px;
+  margin: 4px 2px;
+  padding: 15px 32px;
+  font-size: 16px;
+  text-decoration: none;
+}
+
+</style>
+    <title></title>
+</head>
+<body>
+<script src="/index.b71e74eb.js" defer=""></script>
+<script type="text/javascript">const MCAFE_API = "https://port-0-mcafe-51r7c2alpxsdhy1.sel4.cloudtype.app";
+function parseName(nameStr) {
+    const weightRegex = /(\/\d+)/;
+    const countRegex = /(\*\d+)/;
+    const hasWeight = weightRegex.test(nameStr);
+    const hasCount = countRegex.test(nameStr);
+    const name = /^\s*([^\/*]+)?/.exec(nameStr)[1];
+    const weight = hasWeight ? parseInt(weightRegex.exec(nameStr)[1].replace("/", "")) : 1;
+    const count = hasCount ? parseInt(countRegex.exec(nameStr)[1].replace("*", "")) : 1;
+    return {
+        name,
+        weight,
+        count
+    };
+}
+function getReady(names, goal) {
+    window.roullete.setMarbles(names.split(","));
+    setWinnerRank(goal);
+    ready = names.length > 0;
+}
+function setWinnerRank(rank) {
+    window.options.winningRank = rank - 1;
+    window.roullete.setWinningRank(window.options.winningRank);
+}
+let ready = false;
+document.addEventListener("DOMContentLoaded", ()=>{
+    const urlParams = new URLSearchParams(window.location.search);
+    const users = urlParams.get("users");
+    const count = urlParams.get("count");
+    const weight = urlParams.get("weight");
+    const goal = urlParams.get("goal");
+    const roomSn = urlParams.get("room");
+    const accessToken = urlParams.get("token");
+    const nameSource = users.split(",").map((v)=>v.trim()).filter((v)=>!!v);
+    const nameSet = new Set();
+    const nameCounts = {};
+    nameSource.forEach((nameSrc)=>{
+        const name = nameSrc;
+        const key = weight > 1 ? `${name}/${weight}` : name;
+        if (!nameSet.has(key)) {
+            nameSet.add(key);
+            nameCounts[key] = 0;
+        }
+        nameCounts[key] += Number(count);
+    });
+    const result = [];
+    Object.keys(nameCounts).forEach((key)=>{
+        if (nameCounts[key] > 1) result.push(`${key}*${nameCounts[key]}`);
+        else result.push(key);
+    });
+    const newNames = result.join(",");
+    document.querySelector("#in_names").value = newNames;
+    getReady(newNames, goal);
+    document.querySelector("#btnStart").addEventListener("click", ()=>{
+        if (!ready) return;
+        window.roullete.start();
+        document.querySelector("#settings").classList.add("hide");
+    });
+    document.querySelector("#chkSkill").addEventListener("change", (e)=>{
+        window.options.useSkills = e.target.matches(":checked");
+        window.roullete.setWinningRank(window.options.winningRank);
+    });
+    window.roullete.addEventListener("goal", async (e)=>{
+        ready = false;
+        document.querySelector("#settings").classList.remove("hide");
+        const winner = e.detail.winner;
+        const { memberList  } = await fetch(`${MCAFE_API}/room/${roomSn}`, {
+            headers: {
+                "Authorization": `Bearer ${accessToken}`,
+                "Content-Type": "application/json"
+            }
+        }).then((res)=>res.json());
+        const memberSn = memberList.find((member)=>member.nickname === winner).memberSn;
+        const res = await fetch(`${MCAFE_API}/dashboard/looser`, {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${accessToken}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                looserSn: memberSn,
+                roomSn: +roomSn,
+                gameType: "PINBALL"
+            })
+        }).then((res)=>res.json());
+    });
+});
+
+</script>
+
+<div id="settings" class="settings">
+    <input type="checkbox" id="chkSkill" checked="" class="hide">
+
+    <textarea class="hide" id="in_names" placeholder="hello :)"></textarea>
+    <div class="actions">
+        <button id="btnStart">Start</button>
+    </div>
+
+</div>
+
+
+<div class="copyright">&copy; 2023.<a href="https://lazygyu.net" target="_blank">origin by lazygyu, edit by brady</a>
+</div>
+</body>
+</html>
